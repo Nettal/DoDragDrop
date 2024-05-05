@@ -104,11 +104,11 @@ LRESULT CALLBACK EditWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	static BOOL  fMouseDown   = FALSE;
 	static BOOL  fDidDragDrop = FALSE;
-		   
+
 	switch(msg)
 	{
 	case WM_KEYDOWN:
-		
+
 		// when ESCAPE is pressed clear the current selection
 		if(wParam == VK_ESCAPE)
 			ClearSelection(hwnd);
@@ -142,11 +142,11 @@ LRESULT CALLBACK EditWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 			if(MouseInSelection(hwndEdit, MAKELPARAM(pt.x, pt.y)))
 			{
-				SetCursor(LoadCursor(0, MAKEINTRESOURCE(IDC_ARROW)));
+				SetCursor(LoadCursor(0, (IDC_ARROW)));
 			}
 			else
 			{
-				SetCursor(LoadCursor(0, MAKEINTRESOURCE(IDC_IBEAM)));
+				SetCursor(LoadCursor(0, (IDC_IBEAM)));
 			}
 		}
 
@@ -201,7 +201,7 @@ LRESULT CALLBACK EditWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 
 	case WM_LBUTTONUP:
-		
+
 		// stop drag-drop from happening when the mouse is released.
 		if(fMouseDown)
 		{
@@ -235,15 +235,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		// fixed-width font
 		SendMessage(hwndEdit, WM_SETFONT, (WPARAM)GetStockObject(ANSI_FIXED_FONT), 0);
 
-		// subclass the edit control so we can add drag+drop support to it
-		OldEditWndProc = (WNDPROC)SetWindowLong(hwndEdit, GWL_WNDPROC, (LONG)EditWndProc);
+            // subclass the edit control so we can add drag+drop support to it
+            OldEditWndProc = (WNDPROC) SetWindowLongPtr(hwndEdit, GWLP_WNDPROC,
+                                                        reinterpret_cast<LONG_PTR>(EditWndProc));
 
 		SetFocus(hwndEdit);
 
 		return TRUE;
 
 	case WM_COMMAND:
-	
+
 		// react to menu messages
 		switch(LOWORD(wParam))
 		{
@@ -269,7 +270,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		return 0;
 
 	case WM_SIZE:
-		
+
 		// resize editbox to fit in main window
 		MoveWindow(hwndEdit, 0, 0, LOWORD(lParam), HIWORD(lParam), TRUE);
 		return 0;
@@ -292,8 +293,8 @@ void InitMainWnd()
 
 void CreateMainWnd()
 {
-	hwndMain = CreateWindowEx(0, APPNAME, APPNAME, 
-		WS_VISIBLE|WS_OVERLAPPEDWINDOW, 
+	hwndMain = CreateWindowEx(0, APPNAME, APPNAME,
+		WS_VISIBLE|WS_OVERLAPPEDWINDOW,
 		CW_USEDEFAULT, CW_USEDEFAULT, 512, 200, 0,0,
 		hInstance, 0);
 }
@@ -306,7 +307,7 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrev, LPSTR lpCmdLine, int nShowC
 
 	// This program requires COM
 	OleInitialize(0);
-	
+
 	InitMainWnd();
 	CreateMainWnd();
 
